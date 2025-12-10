@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Goal Tracker</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="stylesheet" href="styles.css" />
+    <script type="module" src="script.js"></script>
+    <script type="module" src="auth-handler.js"></script>
+    <script type="module" src="goals-handler.js"></script>
+  </head>
+  <body>
+    <div id="message" class="message" style="display: none;"></div>
+
+    <div id="auth-section" class="auth-container">
+      <div class="auth-box">
+        <h1>Goal Tracker</h1>
+        <p class="subtitle">Track and achieve your goals</p>
+
+        <div id="signin-section">
+          <h2>Sign In</h2>
+          <form id="signin-form">
+            <div class="form-group">
+              <label for="signin-email">Email</label>
+              <input type="email" id="signin-email" required />
+            </div>
+            <div class="form-group">
+              <label for="signin-password">Password</label>
+              <input type="password" id="signin-password" required />
+            </div>
+            <button type="submit" class="btn btn-primary">Sign In</button>
+          </form>
+          <p class="auth-toggle">
+            Don't have an account? <button id="show-signup" class="link-btn">Sign Up</button>
+          </p>
+        </div>
+
+        <div id="signup-section" style="display: none;">
+          <h2>Sign Up</h2>
+          <form id="signup-form">
+            <div class="form-group">
+              <label for="signup-email">Email</label>
+              <input type="email" id="signup-email" required />
+            </div>
+            <div class="form-group">
+              <label for="signup-password">Password</label>
+              <input type="password" id="signup-password" required minlength="6" />
+              <small>Minimum 6 characters</small>
+            </div>
+            <button type="submit" class="btn btn-primary">Sign Up</button>
+          </form>
+          <p class="auth-toggle">
+            Already have an account? <button id="show-signin" class="link-btn">Sign In</button>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div id="app-section" style="display: none;">
+      <nav class="app-nav">
+        <div class="nav-content">
+          <h1>Goal Tracker</h1>
+          <div class="user-section">
+            <span id="user-email" class="user-email"></span>
+            <button id="logout-btn" class="btn btn-secondary">Logout</button>
+          </div>
+        </div>
+      </nav>
+
+      <main class="main-content">
+        <div class="controls">
+          <button id="show-add-goal" class="btn btn-primary">Add New Goal</button>
+        </div>
+
+        <div id="add-goal-section" class="add-goal-section" style="display: none;">
+          <h2>Add New Goal</h2>
+          <form id="add-goal-form">
+            <div class="form-group">
+              <label for="goal-title">Title</label>
+              <input type="text" id="goal-title" required />
+            </div>
+            <div class="form-group">
+              <label for="goal-description">Description</label>
+              <textarea id="goal-description" rows="3" required></textarea>
+            </div>
+            <div class="form-group">
+              <label for="goal-target-date">Target Date</label>
+              <input type="date" id="goal-target-date" required />
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary">Add Goal</button>
+              <button type="button" id="cancel-add-goal" class="btn btn-secondary">Cancel</button>
+            </div>
+          </form>
+        </div>
+
+        <div id="goals-list" class="goals-list">
+          <p class="loading">Loading goals...</p>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>
