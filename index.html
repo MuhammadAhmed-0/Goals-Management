@@ -1,103 +1,665 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>Goal Tracker</title>
+
+<head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width" />
-    <link rel="stylesheet" href="styles.css" />
-    <script type="module" src="script.js"></script>
-    <script type="module" src="auth-handler.js"></script>
-    <script type="module" src="goals-handler.js"></script>
-  </head>
-  <body>
-    <div id="message" class="message" style="display: none;"></div>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Goal Management Dashboard</title>
 
-    <div id="auth-section" class="auth-container">
-      <div class="auth-box">
-        <h1>Goal Tracker</h1>
-        <p class="subtitle">Track and achieve your goals</p>
+    <!-- CSS (we will create styles.css next) -->
+    <link rel="stylesheet" href="./styles.css" />
 
-        <div id="signin-section">
-          <h2>Sign In</h2>
-          <form id="signin-form">
-            <div class="form-group">
-              <label for="signin-email">Email</label>
-              <input type="email" id="signin-email" required />
-            </div>
-            <div class="form-group">
-              <label for="signin-password">Password</label>
-              <input type="password" id="signin-password" required />
-            </div>
-            <button type="submit" class="btn btn-primary">Sign In</button>
-          </form>
-          <p class="auth-toggle">
-            Don't have an account? <button id="show-signup" class="link-btn">Sign Up</button>
-          </p>
+    <!-- Fonts (optional, still HTML/CSS only; remove if you want zero external calls) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- SIGN IN PAGE -->
+    <div class="auth" id="authPage">
+        <div class="auth__card">
+            <h1 class="auth__title">Welcome Back</h1>
+            <p class="auth__subtitle">Sign in to continue</p>
+
+            <form id="signInForm" class="auth__form">
+                <div class="form__row">
+                    <label class="label">Email</label>
+                    <input type="email" id="signInEmail" required placeholder="you@example.com" />
+                </div>
+
+                <div class="form__row">
+                    <label class="label">Password</label>
+                    <input type="password" id="signInPassword" required placeholder="••••••••" />
+                </div>
+
+                <button class="btn btn--primary btn--full" type="submit">
+                    Sign In
+                </button>
+            </form>
         </div>
-
-        <div id="signup-section" style="display: none;">
-          <h2>Sign Up</h2>
-          <form id="signup-form">
-            <div class="form-group">
-              <label for="signup-email">Email</label>
-              <input type="email" id="signup-email" required />
-            </div>
-            <div class="form-group">
-              <label for="signup-password">Password</label>
-              <input type="password" id="signup-password" required minlength="6" />
-              <small>Minimum 6 characters</small>
-            </div>
-            <button type="submit" class="btn btn-primary">Sign Up</button>
-          </form>
-          <p class="auth-toggle">
-            Already have an account? <button id="show-signin" class="link-btn">Sign In</button>
-          </p>
-        </div>
-      </div>
     </div>
 
-    <div id="app-section" style="display: none;">
-      <nav class="app-nav">
-        <div class="nav-content">
-          <h1>Goal Tracker</h1>
-          <div class="user-section">
-            <span id="user-email" class="user-email"></span>
-            <button id="logout-btn" class="btn btn-secondary">Logout</button>
-          </div>
-        </div>
-      </nav>
 
-      <main class="main-content">
-        <div class="controls">
-          <button id="show-add-goal" class="btn btn-primary">Add New Goal</button>
-        </div>
 
-        <div id="add-goal-section" class="add-goal-section" style="display: none;">
-          <h2>Add New Goal</h2>
-          <form id="add-goal-form">
-            <div class="form-group">
-              <label for="goal-title">Title</label>
-              <input type="text" id="goal-title" required />
-            </div>
-            <div class="form-group">
-              <label for="goal-description">Description</label>
-              <textarea id="goal-description" rows="3" required></textarea>
-            </div>
-            <div class="form-group">
-              <label for="goal-target-date">Target Date</label>
-              <input type="date" id="goal-target-date" required />
-            </div>
-            <div class="form-actions">
-              <button type="submit" class="btn btn-primary">Add Goal</button>
-              <button type="button" id="cancel-add-goal" class="btn btn-secondary">Cancel</button>
-            </div>
-          </form>
-        </div>
+    <!-- App Shell -->
+    <div class="app" id="app">
 
-        <div id="goals-list" class="goals-list">
-          <p class="loading">Loading goals...</p>
-        </div>
-      </main>
+        <!-- Sidebar -->
+        <aside class="sidebar" aria-label="Main navigation">
+            <div class="sidebar__brand">
+                <div class="brand__logo" aria-hidden="true">◎</div>
+                <div class="brand__text">
+                    <div class="brand__name">Goal Tracker</div>
+                    <div class="brand__tag">Your goals, organized</div>
+                </div>
+            </div>
+
+            <nav class="sidebar__nav">
+                <button class="nav__item is-active" data-view="view-dashboard" aria-current="page">
+                    <span class="nav__icon" aria-hidden="true">🏠</span>
+                    <span class="nav__label">Dashboard</span>
+                </button>
+
+                <button class="nav__item" data-view="view-goals">
+                    <span class="nav__icon" aria-hidden="true">🎯</span>
+                    <span class="nav__label">Goals</span>
+                </button>
+
+                <button class="nav__item" data-view="view-tasks">
+                    <span class="nav__icon" aria-hidden="true">✅</span>
+                    <span class="nav__label">Tasks</span>
+                </button>
+
+                <button class="nav__item" data-view="view-reminders">
+                    <span class="nav__icon" aria-hidden="true">⏰</span>
+                    <span class="nav__label">Reminders</span>
+                </button>
+
+                <button class="nav__item" data-view="viewNotes">
+                    <span class="nav__icon" aria-hidden="true">📝</span>
+                    <span class="nav__label">Notes</span>
+                </button>
+
+                <button class="nav__item" data-view="view-settings">
+                    <span class="nav__icon" aria-hidden="true">⚙️</span>
+                    <span class="nav__label">Settings</span>
+                </button>
+            </nav>
+
+            <div class="sidebar__footer">
+                <div class="sidebar__user">
+                    <div class="user__avatar" id="userAvatar" aria-hidden="true">U</div>
+                    <div class="user__meta">
+                        <div class="user__name" id="userName">Guest</div>
+                        <div class="user__email" id="userEmail">Not signed in</div>
+                    </div>
+                </div>
+
+                <div class="sidebar__actions">
+                    <button class="sidebar__logout" id="btnLogout">
+                        Logout
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Area -->
+        <main class="main">
+            <!-- Topbar -->
+            <header class="topbar">
+                <div class="topbar__left">
+                    <button class="iconbtn topbar__hamburger" id="btnToggleSidebar" aria-label="Toggle sidebar"
+                        type="button">
+                        ☰
+                    </button>
+                    <div class="topbar__title">
+                        <h1 id="pageTitle">Dashboard</h1>
+                        <p id="pageSubtitle">Overview of your goals and progress</p>
+                    </div>
+                </div>
+
+                <div class="topbar__right">
+                    <div class="search">
+                        <span class="search__icon" aria-hidden="true">🔎</span>
+                        <input id="globalSearch" class="search__input" type="search"
+                            placeholder="Search goals, tasks..." />
+                    </div>
+
+                    <button class="iconbtn" id="btnQuickAdd" aria-label="Quick add goal" title="Quick add goal"
+                        type="button">
+                        ＋
+                    </button>
+                </div>
+            </header>
+
+            <!-- Content Views -->
+            <section class="content">
+
+                <!-- DASHBOARD VIEW -->
+                <div class="view is-active" id="view-dashboard" role="region" aria-label="Dashboard view">
+                    <div class="grid grid--stats">
+                        <div class="card stat">
+                            <div class="stat__label">Total Goals</div>
+                            <div class="stat__value" id="statTotalGoals">0</div>
+                            <div class="stat__hint">All created goals</div>
+                        </div>
+
+                        <div class="card stat">
+                            <div class="stat__label">Total Tasks</div>
+                            <div class="stat__value" id="statTotalTasks">0</div>
+                            <div class="stat__hint">Across all goals</div>
+                        </div>
+
+                        <div class="card stat">
+                            <div class="stat__label">Today's Tasks</div>
+                            <div class="stat__value" id="statTodayTasks">0</div>
+                            <div class="stat__hint">Due today</div>
+                        </div>
+
+                        <div class="card stat">
+                            <div class="stat__label">Pending Tasks</div>
+                            <div class="stat__value" id="statPendingTasks">0</div>
+                            <div class="stat__hint">Not completed</div>
+                        </div>
+
+
+                        <div class="card stat">
+                            <div class="stat__label">Completed Tasks</div>
+                            <div class="stat__value" id="statCompletedTasks">0</div>
+                            <div class="stat__hint">Marked as done</div>
+                        </div>
+
+                        <div class="card stat">
+                            <div class="stat__label">Overall Progress</div>
+                            <div class="stat__value" id="statOverallProgress">0%</div>
+                            <div class="stat__hint">Completion rate</div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid--two">
+                        <div class="card">
+                            <div class="card__header">
+                                <div>
+                                    <h2 class="card__title">Your Goals</h2>
+                                    <p class="card__subtitle">Track progress and stay consistent</p>
+                                </div>
+                                <button class="btn btn--primary" id="btnOpenGoalModalFromDashboard" type="button">
+                                    + Add Goal
+                                </button>
+                            </div>
+
+                            <div class="card__body">
+                                <div class="empty" id="dashboardGoalsEmpty" hidden>
+                                    <div class="empty__icon" aria-hidden="true">🎯</div>
+                                    <div class="empty__title">No goals yet</div>
+                                    <div class="empty__text">Create your first goal to start tracking progress.</div>
+                                    <button class="btn btn--primary" id="btnCreateFirstGoal" type="button">Create
+                                        Goal</button>
+                                </div>
+
+                                <div class="cards" id="dashboardGoalsList" aria-label="Goals list">
+                                    <!-- JS renders goal cards -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card__header">
+                                <div>
+                                    <h2 class="card__title">Motivation</h2>
+                                    <p class="card__subtitle">A little push every day</p>
+                                </div>
+                                <button class="btn btn--ghost" id="btnNewQuote" type="button">New Quote</button>
+                            </div>
+
+                            <div class="card__body">
+                                <div class="quote" id="quoteBox">
+                                    <div class="quote__mark" aria-hidden="true">“</div>
+                                    <p class="quote__text" id="quoteText">Small steps every day lead to big results.</p>
+                                    <div class="quote__author" id="quoteAuthor">— Goal Tracker</div>
+                                </div>
+
+                                <div class="divider"></div>
+
+                                <h3 class="section-title">Today’s Focus</h3>
+                                <div class="list" id="todayTasksList">
+                                    <!-- JS renders today tasks -->
+                                </div>
+
+                                <div class="empty" id="todayTasksEmpty" hidden>
+                                    <div class="empty__icon" aria-hidden="true">✅</div>
+                                    <div class="empty__title">No tasks due soon</div>
+                                    <div class="empty__text">You’re all caught up. Add tasks to keep momentum.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- GOALS VIEW -->
+                <div class="view" id="view-goals" role="region" aria-label="Goals view">
+                    <div class="view__header">
+                        <div class="view__titleblock">
+                            <h2>Goals</h2>
+                            <p>Create and manage all your goals here.</p>
+                        </div>
+                        <button class="btn btn--primary" id="btnOpenGoalModal" type="button">+ Add Goal</button>
+                    </div>
+
+                    <div class="filters">
+                        <div class="chips" aria-label="Goal filters">
+                            <button class="chip is-active" data-goal-filter="all" type="button">All</button>
+                            <button class="chip" data-goal-filter="high" type="button">High</button>
+                            <button class="chip" data-goal-filter="medium" type="button">Medium</button>
+                            <button class="chip" data-goal-filter="low" type="button">Low</button>
+                        </div>
+
+                        <div class="select">
+                            <label class="sr-only" for="goalsSort">Sort</label>
+                            <select id="goalsSort">
+                                <option value="deadline">Sort by Deadline</option>
+                                <option value="priority">Sort by Priority</option>
+                                <option value="title">Sort by Title</option>
+                                <option value="progress">Sort by Progress</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="empty" id="goalsEmpty" hidden>
+                        <div class="empty__icon" aria-hidden="true">📌</div>
+                        <div class="empty__title">No goals created</div>
+                        <div class="empty__text">Add a goal to start organizing your progress.</div>
+                        <button class="btn btn--primary" id="btnAddGoalFromEmpty" type="button">Add Goal</button>
+                    </div>
+
+                    <div class="cards" id="goalsList" aria-label="Goals list">
+                        <!-- JS renders goal cards -->
+                    </div>
+                </div>
+
+                <!-- TASKS VIEW -->
+                <div class="view" id="view-tasks" role="region" aria-label="Tasks view">
+                    <div class="view__header">
+                        <div class="view__titleblock">
+                            <h2>Tasks</h2>
+                            <p>View and manage tasks across all goals.</p>
+                        </div>
+
+                        <button class="btn btn--primary" id="btnOpenTaskModalGlobal" type="button">
+                            + Add Task
+                        </button>
+                    </div>
+
+                    <div class="filters">
+                        <div class="chips" aria-label="Task filters">
+                            <button class="chip is-active" data-task-filter="all" type="button">All</button>
+                            <button class="chip" data-task-filter="pending" type="button">Pending</button>
+                            <button class="chip" data-task-filter="completed" type="button">Completed</button>
+                            <button class="chip" data-task-filter="overdue" type="button">Overdue</button>
+                        </div>
+
+                        <div class="select">
+                            <label class="sr-only" for="tasksSort">Sort</label>
+                            <select id="tasksSort">
+                                <option value="due_date">Sort by Due Date</option>
+                                <option value="status">Sort by Status</option>
+                                <option value="title">Sort by Title</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="empty" id="tasksEmpty" hidden>
+                        <div class="empty__icon" aria-hidden="true">✅</div>
+                        <div class="empty__title">No tasks yet</div>
+                        <div class="empty__text">Add tasks under your goals to make progress.</div>
+                    </div>
+
+                    <div class="tablewrap">
+                        <table class="table" aria-label="Tasks table">
+                            <thead>
+                                <tr>
+                                    <th>Status</th>
+                                    <th>Task</th>
+                                    <th>Goal</th>
+                                    <th>Due</th>
+                                    <th class="th-actions">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tasksTableBody">
+                                <!-- JS renders task rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- REMINDERS VIEW -->
+                <div class="view" id="view-reminders" role="region" aria-label="Reminders view">
+                    <div class="view__header">
+                        <div class="view__titleblock">
+                            <h2>Reminders</h2>
+                            <p>Set how often you want reminders for pending tasks.</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid--two">
+                        <div class="card">
+                            <div class="card__header">
+                                <div>
+                                    <h3 class="card__title">Reminder Preferences</h3>
+                                    <p class="card__subtitle">Choose your schedule</p>
+                                </div>
+                            </div>
+                            <div class="card__body">
+                                <form id="reminderForm" class="form">
+                                    <div class="form__row">
+                                        <label class="label" for="reminderEnabled">Enable reminders</label>
+                                        <div class="toggle">
+                                            <input type="checkbox" id="reminderEnabled" />
+                                            <span class="toggle__ui" aria-hidden="true"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="form__row">
+                                        <label class="label" for="reminderFrequency">Frequency</label>
+                                        <select id="reminderFrequency">
+                                            <option value="daily">Daily</option>
+                                            <option value="weekly">Weekly</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form__row">
+                                        <label class="label" for="reminderTime">Time</label>
+                                        <input type="time" id="reminderTime" value="09:00" />
+                                    </div>
+
+                                    <div class="form__row">
+                                        <label class="label" for="reminderChannel">Channel</label>
+                                        <select id="reminderChannel">
+                                            <option value="email">Email</option>
+                                            <option value="none">None (UI only)</option>
+                                        </select>
+                                    </div>
+
+                                    <button class="btn btn--primary" type="submit" id="btnSaveReminderPrefs">
+                                        Save Preferences
+                                    </button>
+
+                                    <p class="hint">
+                                        Note: Actual sending (email) will be connected via Firebase Functions + provider
+                                        later.
+                                    </p>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card__header card__header--between">
+                                <div>
+                                    <h3 class="card__title">Upcoming</h3>
+                                    <p class="card__subtitle">Tasks you should focus on</p>
+                                </div>
+
+                                <!-- FILTER -->
+                                <select id="remindersUpcomingFilter" class="select">
+                                    <option value="today">Today</option>
+                                    <option value="tomorrow">Tomorrow</option>
+                                    <option value="week">This Week</option>
+                                    <option value="all">All</option>
+                                </select>
+                            </div>
+
+                            <div class="card__body">
+                                <div class="list upcoming-list" id="remindersUpcomingList">
+                                    <!-- JS renders upcoming tasks -->
+                                </div>
+
+                                <div class="empty" id="remindersUpcomingEmpty" hidden>
+                                    <div class="empty__icon" aria-hidden="true">⏰</div>
+                                    <div class="empty__title">No upcoming tasks</div>
+                                    <div class="empty__text">
+                                        Add tasks with due dates to see reminders.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- NOTES VIEW -->
+                <section class="view" id="viewNotes">
+                    <h2 class="view__title">Notes</h2>
+                    <p class="view__subtitle">Track your reflections</p>
+
+                    <div class="notes-grid">
+                        <!-- LEFT: ADD NOTE -->
+                        <div class="card">
+                            <div class="card__header">
+                                <div>
+                                    <h3 class="card__title">Daily Reflection</h3>
+                                    <p class="card__subtitle">Write a quick note for today</p>
+                                </div>
+                            </div>
+
+                            <textarea id="noteText" class="notes-textarea"
+                                placeholder="What went well? What was hard?"></textarea>
+
+                            <div class="notes-actions">
+                                <button class="btn btn--primary" id="btnSaveNote">
+                                    Save Note
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- RIGHT: SAVED NOTES -->
+                        <div class="card">
+                            <div class="card__header card__header--between">
+                                <div>
+                                    <h3 class="card__title">Saved Notes</h3>
+                                    <p class="card__subtitle">Your reflections</p>
+                                </div>
+
+                                <!-- FILTER -->
+                                <select id="notesFilter" class="select">
+                                    <option value="today">Today</option>
+                                    <option value="yesterday">Yesterday</option>
+                                    <option value="month">This Month</option>
+                                    <option value="year">This Year</option>
+                                    <option value="all">All</option>
+                                </select>
+                            </div>
+
+                            <div id="notesList" class="notes-list"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SETTINGS VIEW -->
+                <div class="view" id="view-settings" role="region" aria-label="Settings view">
+                    <div class="view__header">
+                        <div class="view__titleblock">
+                            <h2>Settings</h2>
+                            <p>Basic preferences for the app.</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid--two">
+                        <div class="card">
+                            <div class="card__header">
+                                <div>
+                                    <h3 class="card__title">Appearance</h3>
+                                    <p class="card__subtitle">Simple preferences</p>
+                                </div>
+                            </div>
+                            <div class="card__body">
+                                <div class="form__row">
+                                    <label class="label" for="themeMode">Theme</label>
+                                    <select id="themeMode">
+                                        <option value="system">System</option>
+                                        <option value="light">Light</option>
+                                        <option value="dark">Dark</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 
+            <div class="card">
+              <div class="card__header">
+                <div>
+                  <h3 class="card__title">Data</h3>
+                  <p class="card__subtitle">Export or reset</p>
+                </div>
+              </div>
+              <div class="card__body">
+                <button class="btn btn--ghost" id="btnExportData" type="button">Export Data (JSON)</button>
+                <button class="btn btn--danger" id="btnResetData" type="button">Reset All Data</button>
+                <p class="hint">Reset requires confirmation. Export will create a JSON download.</p>
+              </div>
+            </div> -->
+                    </div>
+                </div>
+
+            </section>
+        </main>
     </div>
-  </body>
+
+    <!-- MODAL: ADD/EDIT GOAL -->
+    <div class="modal" id="goalModal" role="dialog" aria-modal="true" aria-labelledby="goalModalTitle" hidden>
+        <div class="modal__backdrop" data-close-modal="goalModal"></div>
+        <div class="modal__panel">
+            <div class="modal__header">
+                <h2 id="goalModalTitle">Add Goal</h2>
+                <button class="iconbtn" type="button" aria-label="Close" data-close-modal="goalModal">✕</button>
+            </div>
+
+            <form class="form" id="goalForm">
+                <input type="hidden" id="goalId" value="" />
+
+                <div class="form__row">
+                    <label class="label" for="goalTitle">Goal Title</label>
+                    <input id="goalTitle" type="text" placeholder="e.g., Get fit in 90 days" required />
+                </div>
+
+                <div class="form__row">
+                    <label class="label" for="goalDescription">Goal Description</label>
+                    <textarea id="goalDescription" rows="4" placeholder="Describe your goal..." required></textarea>
+                </div>
+
+                <div class="form__row form__row--two">
+                    <div>
+                        <label class="label" for="goalDeadline">Deadline</label>
+                        <input id="goalDeadline" type="date" required />
+                    </div>
+
+                    <div>
+                        <label class="label" for="goalPriority">Priority</label>
+                        <select id="goalPriority" required>
+                            <option value="high">High</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="low">Low</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form__row">
+                    <label class="label" for="goalStatus">Status</label>
+                    <select id="goalStatus">
+                        <option value="active" selected>Active</option>
+                        <option value="paused">Paused</option>
+                    </select>
+                </div>
+
+
+                <div class="modal__footer">
+                    <button class="btn btn--ghost" type="button" data-close-modal="goalModal">Cancel</button>
+                    <button class="btn btn--primary" type="submit" id="btnSaveGoal">Save Goal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: ADD/EDIT TASK -->
+    <div class="modal" id="taskModal" role="dialog" aria-modal="true" aria-labelledby="taskModalTitle" hidden>
+        <div class="modal__backdrop" data-close-modal="taskModal"></div>
+        <div class="modal__panel">
+            <div class="modal__header">
+                <h2 id="taskModalTitle">Add Task</h2>
+                <button class="iconbtn" type="button" aria-label="Close" data-close-modal="taskModal">✕</button>
+            </div>
+
+            <form class="form" id="taskForm">
+                <input type="hidden" id="taskId" value="" />
+
+                <!-- If created from global tasks view, user selects a goal -->
+                <div class="form__row" id="taskGoalPickerRow">
+                    <label class="label" for="taskGoalId">Select Goal</label>
+                    <select id="taskGoalId" required>
+                        <option value="">Choose a goal...</option>
+                        <!-- JS populates options -->
+                    </select>
+                </div>
+
+                <div class="form__row">
+                    <label class="label" for="taskTitle">Task Title</label>
+                    <input id="taskTitle" type="text" placeholder="e.g., Exercise 3 times a week" required />
+                </div>
+
+                <div class="form__row">
+                    <label class="label" for="taskDescription">Task Description</label>
+                    <textarea id="taskDescription" rows="4" placeholder="Describe the task..." required></textarea>
+                </div>
+
+                <div class="form__row form__row--two">
+                    <div>
+                        <label class="label" for="taskDueDate">Due Date</label>
+                        <input id="taskDueDate" type="date" required />
+                    </div>
+
+                    <div>
+                        <label class="label" for="taskStatus">Status</label>
+                        <select id="taskStatus" required>
+                            <option value="pending" selected>Pending</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="modal__footer">
+                    <button class="btn btn--ghost" type="button" data-close-modal="taskModal">Cancel</button>
+                    <button class="btn btn--primary" type="submit" id="btnSaveTask">Save Task</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- CONFIRM DIALOG -->
+    <div class="modal" id="confirmModal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle" hidden>
+        <div class="modal__backdrop" data-close-modal="confirmModal"></div>
+        <div class="modal__panel modal__panel--sm">
+            <div class="modal__header">
+                <h2 id="confirmTitle">Confirm</h2>
+                <button class="iconbtn" type="button" aria-label="Close" data-close-modal="confirmModal">✕</button>
+            </div>
+
+            <div class="modal__body">
+                <p id="confirmMessage">Are you sure?</p>
+            </div>
+
+            <div class="modal__footer">
+                <button class="btn btn--ghost" id="confirmCancel" type="button"
+                    data-close-modal="confirmModal">Cancel</button>
+                <button class="btn btn--danger" id="confirmOk" type="button">Yes, Continue</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOASTS -->
+    <div class="toasts" id="toasts" aria-live="polite" aria-atomic="true"></div>
+
+    <!-- JS (we will create app.js next) -->
+    <script type="module" src="app.js"></script>
+
+</body>
+
 </html>
