@@ -492,8 +492,10 @@ input, textarea, select {
 /* Goal */
 .table th:nth-child(3),
 .table td:nth-child(3) {
-  width: 160px;
+  width: 220px;              /* give it a bit more room */
   white-space: nowrap;
+  overflow: hidden;          /* stop text spilling into next cell */
+  text-overflow: ellipsis;   /* show ... when long */
 }
 
 /* Due date */
